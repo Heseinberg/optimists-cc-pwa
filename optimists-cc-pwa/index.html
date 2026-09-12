@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1F3D2A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Optimists">
+<title>Optimists CC</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+  :root{
+    --ink:#17231C;
+    --pitch:#1F3D2A;
+    --pitch-dark:#152A1D;
+    --parchment:#F0EAD6;
+    --chalk:#FFFFF8;
+    --leather:#8B2E1F;
+    --willow:#C9A66B;
+    --line: rgba(23,35,28,0.14);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;background:var(--parchment);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;height:100%;}
+  body{display:flex;justify-content:center;}
+  #app{width:100%;max-width:480px;min-height:100vh;background:var(--parchment);display:flex;flex-direction:column;position:relative;}
+
+  header{background:var(--pitch);color:var(--chalk);padding:18px 18px 14px;position:sticky;top:0;z-index:5;}
+  header .crest-row{display:flex;align-items:baseline;justify-content:space-between;}
+  header h1{font-family:'Fraunces',serif;font-weight:700;font-size:22px;margin:0;letter-spacing:0.2px;}
+  header .synced{font-size:11px;color:var(--willow);font-variant-numeric:tabular-nums;}
+  header .tagline{margin:2px 0 0;font-size:12.5px;color:rgba(255,255,248,0.75);}
+
+  nav.tabs{display:flex;overflow-x:auto;gap:4px;padding:10px 14px 0;background:var(--pitch);position:sticky;top:64px;z-index:5;scrollbar-width:none;}
+  nav.tabs::-webkit-scrollbar{display:none;}
+  nav.tabs button{flex:0 0 auto;background:none;border:none;color:rgba(255,255,248,0.6);font-family:'IBM Plex Sans';font-size:13.5px;font-weight:500;padding:8px 12px 10px;cursor:pointer;border-bottom:2px solid transparent;}
+  nav.tabs button.active{color:var(--chalk);border-bottom:2px solid var(--willow);}
+
+  main{flex:1;padding:16px 16px 90px;}
+  section{display:none;}
+  section.active{display:block;}
+
+  .section-title{font-family:'Fraunces',serif;font-weight:600;font-size:19px;margin:4px 0 12px;}
+
+  .chip-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px;margin-bottom:8px;scrollbar-width:none;}
+  .chip-row::-webkit-scrollbar{display:none;}
+  .chip{flex:0 0 auto;border:1px solid var(--line);background:var(--chalk);color:var(--ink);font-size:12.5px;padding:7px 12px;border-radius:100px;cursor:pointer;white-space:nowrap;}
+  .chip.active{background:var(--pitch);color:var(--chalk);border-color:var(--pitch);}
+
+  .card{background:var(--chalk);border:1px solid var(--line);border-radius:2px;padding:14px 14px;margin-bottom:10px;}
+  .news-date{font-size:11.5px;color:var(--leather);font-weight:600;font-variant-numeric:tabular-nums;}
+  .news-title{font-family:'Fraunces',serif;font-size:16.5px;font-weight:600;margin:4px 0 6px;line-height:1.25;}
+  .news-body{font-size:13.5px;line-height:1.5;color:#3A3A32;margin:0 0 8px;}
+  .news-link{font-size:12.5px;color:var(--pitch);text-decoration:none;border-bottom:1px solid var(--pitch);}
+
+  table.fixtures{width:100%;border-collapse:collapse;background:var(--chalk);border:1px solid var(--line);}
+  table.fixtures th{text-align:left;font-size:11px;font-weight:600;color:#6b6b5e;padding:8px 8px;border-bottom:1px solid var(--line);}
+  table.fixtures td{font-size:13px;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top;}
+  table.fixtures tr:last-child td{border-bottom:none;}
+  .result{font-size:11.5px;color:var(--leather);font-weight:600;}
+  .empty{font-size:13px;color:#6b6b5e;padding:24px 4px;text-align:center;border:1px dashed var(--line);}
+  .empty a{color:var(--pitch);}
+
+  .btn{display:inline-block;background:var(--pitch);color:var(--chalk);font-size:13px;font-weight:500;text-decoration:none;padding:9px 14px;border-radius:2px;margin-top:8px;}
+  .btn.outline{background:none;border:1px solid var(--pitch);color:var(--pitch);}
+
+  .link-list a{display:block;background:var(--chalk);border:1px solid var(--line);padding:12px 14px;margin-bottom:8px;color:var(--ink);text-decoration:none;font-size:14px;font-family:'Fraunces',serif;font-weight:500;}
+  .link-list a span{display:block;font-family:'IBM Plex Sans';font-weight:400;font-size:12px;color:#6b6b5e;margin-top:2px;}
+
+  .note{font-size:12px;color:#6b6b5e;line-height:1.5;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);}
+
+  nav.tabbar{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:var(--chalk);border-top:1px solid var(--line);display:flex;z-index:10;}
+  nav.tabbar button{flex:1;background:none;border:none;padding:10px 4px 12px;font-size:11px;color:#8a8a7a;font-family:'IBM Plex Sans';cursor:pointer;}
+  nav.tabbar button .dot{display:block;width:5px;height:5px;border-radius:50%;background:transparent;margin:0 auto 4px;}
+  nav.tabbar button.active{color:var(--pitch-dark);font-weight:600;}
+  nav.tabbar button.active .dot{background:var(--leather);}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header>
+    <div class="crest-row">
+      <h1>Optimists CC</h1>
+      <div class="synced" id="syncedLabel"></div>
+    </div>
+    <p class="tagline">The oldest cricket club in Luxembourg &middot; Walferdange</p>
+  </header>
+
+  <nav class="tabs" id="topTabs"></nav>
+
+  <main>
+    <section id="sec-news" class="active">
+      <div class="section-title">Latest news</div>
+      <div id="newsList"></div>
+      <div class="note">Snapshot from optimists.cc, synced 12 Sep 2026. <a class="news-link" href="https://www.optimists.cc/news/default.aspx" target="_blank">See all news on the site →</a></div>
+    </section>
+
+    <section id="sec-fixtures">
+      <div class="section-title">Fixtures</div>
+      <div class="chip-row" id="teamChips"></div>
+      <div id="fixturesBody"></div>
+    </section>
+
+    <section id="sec-teams">
+      <div class="section-title">Teams &amp; squads</div>
+      <div id="teamsList"></div>
+      <div class="note" style="margin-top:0;border-top:none;padding-top:0;margin-bottom:14px;">League tables aren't shown — the site has never populated them for any season (verified live: the season dropdown only ever offers 2011, and admits no table was added). 2026 averages are shown below only for the two teams where the site actually publishes stats (LCF League &amp; BCF League) — every team was checked against every competition (incl. "Combined") via a connected browser on 12 Sep 2026, since the site's dropdown can't be read by a simple page fetch; all other teams/competitions genuinely return no records, even ones with matches played.</div>
+    </section>
+
+    <section id="sec-honours">
+      <div class="section-title">Honours board</div>
+      <div id="honoursList"></div>
+    </section>
+
+    <section id="sec-more">
+      <div id="moreList-wrap">
+        <div class="section-title">More</div>
+        <div class="link-list" id="moreList"></div>
+      </div>
+      <div id="moreDetail-wrap" style="display:none;">
+        <button id="moreBack" style="background:none;border:none;color:var(--pitch);font-size:13px;font-weight:600;padding:0 0 14px;cursor:pointer;">&larr; Back</button>
+        <div id="moreDetail"></div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabbar" id="bottomTabs"></nav>
+</div>
+
+<script>
+const TEAMS = [
+  {id:"4063", name:"Optimists (Friendly)"},
+  {id:"4070", name:"OCC (LCF - Outdoor) 1st XI"},
+  {id:"18597", name:"OCC (LCF - Outdoor) 2nd XI"},
+  {id:"4068", name:"OCC (BCF) 1st XI"},
+  {id:"19465", name:"OCC (LCF - Indoor) 1st XI"},
+  {id:"19466", name:"OCC (LCF - Indoor) 2nd XI"},
+  {id:"4110", name:"Optimists Maidens (OMCC)"},
+  {id:"19423", name:"Optimists (Other)"},
+  {id:"4069", name:"Optimists U13s - Defunct"}
+];
+
+const NEWS = [
+  {date:"06 Sep 2026", title:"OCC win LCF Division 1", body:"OCC's 1st XI defeated Stars' 1st XI by 84 runs in the LCF Outdoor League Division I final, posting 207/6 before restricting Stars to 123/9. Hashmat Momand's explosive 66 from 24 balls set up the total, while brother Milad's 3/28 dismantled the Stars top order.", url:"https://www.optimists.cc/newsstory/newsid_153329/default.aspx"},
+  {date:"09 Aug 2026", title:"OCC beat Barnet in last over thriller!", body:"On a pleasant cloudy day, Luxembourg OCC batted first and posted a competitive 194/5 from their 25 overs, setting Barnet CC a target of 195. The innings was built on strong contributions from both the top and middle order.", url:"https://www.optimists.cc/newsstory/newsid_153170/default.aspx"},
+  {date:"09 Aug 2026", title:"OCC thrash Brugges in BCF League", body:"Optimists Cricket Club produced a disciplined all-round performance to beat Brugge Cricket Club-1 by eight wickets in BCF Division 2, cruising home after Brugge struggled to build momentum.", url:"https://www.optimists.cc/newsstory/newsid_153167/default.aspx"},
+  {date:"08 Aug 2026", title:"OCC beat Barnet CC", body:"OCC welcomed Barnet CC to Luxembourg for a weekend of cricket, with the first game played over 35 overs at Walferdange. Barnet won the toss and elected to bat first on a good cricketing surface.", url:"https://www.optimists.cc/newsstory/newsid_153166/default.aspx"},
+  {date:"07 Aug 2026", title:"OCC 1st XI beat Heritage to earn place in final", body:"OCC 1st XI (199/6) defeated Heritage 1 (145/10) by 54 runs, storming into the LCF Division I Grand Final with a magnificent victory.", url:"https://www.optimists.cc/newsstory/newsid_153165/default.aspx"},
+  {date:"26 Jul 2026", title:"OCC vs Munich CC", body:"A brilliant Luxembourg morning set the stage as Optimists CC welcomed Munich Cricket Club for a 30-over summer friendly, with extra significance for the home side.", url:"https://www.optimists.cc/newsstory/newsid_153090/default.aspx"},
+  {date:"25 Jul 2026", title:"Debut Hundred for Smith - OCC vs Munich CC", body:"On a glorious summer afternoon, OCC and Munich CC took to the field for what was billed as a friendly — though the Luxembourg sun had other ideas.", url:"https://www.optimists.cc/newsstory/newsid_153091/default.aspx"},
+  {date:"19 Jul 2026", title:"Optimists CC beat Premium Cricket Club Brussels by 6 Wickets", body:"Sunday afternoon, 19th July 2026, BCF Division 2 — the Optimists decided to live up to their name in a thrilling league encounter.", url:"https://www.optimists.cc/newsstory/newsid_153053/default.aspx"},
+  {date:"11 Jul 2026", title:"OCC 1st XI vs OCC 2nd XI and good bye to Ed", body:"Winning the toss and batting first, OCC 1st XI came out with attacking intent — Asghar Ali struck a quickfire 48 from 24 balls, with five fours and three sixes.", url:"https://www.optimists.cc/newsstory/newsid_152991/default.aspx"},
+  {date:"28 Jun 2026", title:"Optimists CC beat ICC Brussels-1 by 47 runs", body:"An early morning trip to Wemmel turned into a statement win, played under scorching 38-degree heat across seven hours.", url:"https://www.optimists.cc/newsstory/newsid_152912/default.aspx"},
+  {date:"19 Jun 2026", title:"Optimists 2nd XI vs Heritage – LCF Division 1", body:"The aroma of freshly cut grass and ominous summer storm clouds set the backdrop for the penultimate group stage match against Heritage 1st XI.", url:"https://www.optimists.cc/newsstory/newsid_152877/default.aspx"}
+];
+
+const SQUADS = {
+  "4070": { captain: "Edmund Packard", vc: "Pankaj Malav", players: ["Johan Terblanche"],
+    history: { all:{m:116,w:76,l:30,d:2}, y2026:{m:1,w:1,l:0}, y2025:{m:15,w:12,l:3}, y2024:{m:15,w:12,l:1} } },
+  "18597": { captain: "Andries Venter", vc: "Ben McIlroy", players: ["Johan Terblanche"],
+    history: { all:{m:12,w:5,l:7}, y2024:{m:2,w:1,l:1}, y2022:{m:10,w:4,l:6} } },
+  "4068": { captain: "Pankaj Malav", vc: "Pankaj Malav", players: [],
+    history: { all:{m:163,w:100,l:51}, y2026:{m:4,w:3,l:1}, y2025:{m:9,w:4,l:3} } },
+  "4063": { captain: "Edmund Packard", vc: null, players: ["Johan Terblanche"],
+    history: { all:{m:119,w:54,l:38,d:2,t:3}, y2026:{m:3,w:0,l:0} } },
+  "19465": { captain: "Oves Ali Musa", vc: "Oves Ali Musa", players: [],
+    history: { all:{m:0,w:0,l:0} } },
+  "4110": { captain: "Kerry Fraser", vc: "Francesca Ellingworth",
+    players: ["Navneet Bamrah","Hannah Boughton","Georgia Brealey","Clea Bultot","Paula Correia","Laura Ellingworth","Sue Ellingworth","Pat Gautier","Elena Gebhard","Annette Graham","Siofra Lawlor","Anthea MacDonald","Katarina Mikjel","Maria Serfioti","Fiona Templeman","Lydie Wykes-Templeman","Stella Wykes-Templeman"],
+    history: { all:{m:13,w:1,l:8,c:4} } },
+  "19423": { captain: null, vc: null, players: ["Johan Terblanche"], history: null },
+  "19466": { captain: "Shoaib Mohammad", vc: "Shoaib Mohammad", players: [], history: { all:{m:0,w:0,l:0} } },
+  "4069": { captain: null, vc: null, players: [], history: { all:{m:6,w:0,l:0,d:0,t:0,c:6} } }
+};
+
+const HONOURS = {
+  "Club batsman (Lord Slynn Shield)": [
+    ["2023","Edmund Packard"], ["2021","Advyth Manepalli"], ["2020","Scott Browne"], ["2019","Girish Venkateswaran"],
+    ["2018","Richard Neale"], ["2017","Vikram Vijh"], ["2016","Vikram Vijh"], ["2015","Saransh Kulshrestha"],
+    ["2014","Joost Mees"], ["2012","Richard Neale"], ["2011","Richard Neale"], ["2010","Richard Neale"]
+  ],
+  "Bowler": [
+    ["2023","Pankaj Malav"], ["2021","Raju Ratnakar Akulwar"], ["2020","Pankaj Malav"], ["2019","Mohit Dixit"],
+    ["2018","Vikram Vijh"], ["2017","Atif Kamal"], ["2016","Atif Kamal"],
+    ["2015","Mike West — 17 wickets at 13.06, most in the season"],
+    ["2014","Tamilselvan Mani — best aggregate & average in BCF League"]
+  ],
+  "All-rounder": [
+    ["2023","Edmund Packard"], ["2021","William Cope"], ["2020","Vikram Vijh"], ["2019","Vikram Vijh"],
+    ["2018","Vikram Vijh"], ["2016","Girish Venkateswaran"], ["2015","Taral Desai"], ["2012","Taral Desai"], ["2011","Taral Desai"]
+  ],
+  "Fielder": [
+    ["2023","Yama Abdiani"], ["2021","James Barker"], ["2020","Advyth Manepalli"], ["2019","Anoop Orsu"],
+    ["2018","James Barker"], ["2017","Aanand Pandey"], ["2016","Saransh Kulshrestha"], ["2015","Bichitra Sahoo"],
+    ["2014","William Cope — outstanding athletic outfielding, for a wicket-keeper!"]
+  ],
+  "Best cricketing performance of the year": [
+    ["2021","William Cope — 151 vs Liège"], ["2020","Saransh Kulshrestha — 88 off 53 balls vs Royal Brussels"],
+    ["2019","James Barker — Most Improved"], ["2018","Ben Embleton — 155* 1st XI vs PCCB"],
+    ["2017","Atif Kamal"], ["2016","James Barker & William Heath — 289-run partnership away vs Brugge"],
+    ["2015","Timothy Barker"], ["2014","William Heath — 98* in T20 Final of LCF League"],
+    ["2012","Richard Neale — 107 in BCF T20 Finals Day semi-final"], ["2011","Joost Mees — 96 off 48 balls in a BCF T20 match"]
+  ],
+  "Club member": [
+    ["2023","Graham Cope"], ["2021","Joost Mees & Stephen Evans (OCC & LCF Chairmen)"],
+    ["2020","Ground staff: Graham Cope, Robert Deed, Michael West, Richard Andrews & Phil Burleigh"],
+    ["2019","Raju Sati"], ["2018","Phillip Burleigh"], ["2017","Roger Barker"], ["2016","Mohit Dixit"], ["2015","Graham Cope"]
+  ],
+  "Most Improved": [
+    ["2023","Andries Venter & Ben McIlroy — best new joiners"], ["2021","Oscar Whiteman"], ["2020","Raju Ratnakar Akulwar"]
+  ]
+};
+
+const FIXTURES = {
+  "4063": {
+    label: "Optimists (Friendly) — 2026",
+    ical: "https://www.optimists.cc/fixtures/teamid_4063/seasonid_19380/default.aspx?ical=true",
+    rows: [
+      ["Sat 18 Apr 2026","Ground Clear Up Day (H)","Home","10:00","Friendly",""],
+      ["Sat 25 Apr 2026","Captains vs Chairmans (H)","Home","11:00","Friendly",""],
+      ["Sat 25 Apr 2026","Captains vs Vice Captains (H)","Home","15:00","Friendly",""],
+      ["Sat/Sun 16–17 May 2026","vs Standard Athletic CC, Paris (H)","Home","13:00","Friendly",""],
+      ["Thu–Mon 21–25 May 2026","vs Ontario League Over 40s (H)","Home","varies","Friendly",""],
+      ["Thu–Sun 04–07 Jun 2026","vs MCC (H)","Home","varies","Friendly",""],
+      ["Sat 04 Jul 2026","OCC internal 6 a side (H)","Home","14:30","Friendly","CANCELLED"],
+      ["Sun 05 Jul 2026","vs British Chamber of Commerce (H)","Home","13:00","Friendly",""],
+      ["Sat/Sun 25–26 Jul 2026","vs Munich CC (H)","Home","13:00","Friendly",""],
+      ["Fri 31 Jul 2026","OCC Internal T20 (H)","Home","18:00","Friendly",""],
+      ["Sat/Sun 08–09 Aug 2026","vs Barnet CC (H)","Home","13:00","Friendly",""],
+      ["Sat 15 Aug 2026","Indian Association Luxembourg (H)","Home","13:00","Friendly",""],
+      ["Sat/Sun 29–30 Aug 2026","vs Standard Athletic CC, Paris (A)","Away","12:30","Friendly","CANCELLED"],
+      ["Sat/Sun 12–13 Sep 2026","vs Refreshers CC (H)","Home","13:00","Friendly",""],
+      ["Sat/Sun 26–27 Sep 2026","vs Madhatters CC (H)","Home","13:00","Friendly",""]
+    ]
+  },
+  "4070": {
+    label: "OCC (LCF - Outdoor) 1st XI — 2026",
+    ical: "https://www.optimists.cc/fixtures/teamid_4070/seasonid_19380/default.aspx?ical=true",
+    rows: [
+      ["Fri 01 May 2026","Heritage CC (H)","Home","5pm","LCF League","Won by 1 wicket"],
+      ["Sun 10 May 2026","Star 1 (H)","Home","1pm","LCF League",""],
+      ["Sun 31 May 2026","Heritage 2 CC (H)","Home","4:30pm","LCF League",""],
+      ["Sat 20 Jun 2026","Lux Knights 1 (H)","Home","10am","LCF League",""],
+      ["Fri 03 Jul 2026","Star 2 (H)","Home","5:30pm","LCF League",""],
+      ["Sat 11 Jul 2026","OCC 2s (H)","Home","5pm","LCF League",""],
+      ["Sun 02 Aug 2026","Eliminator (H)","Home","1pm","LCF League",""],
+      ["Sun 02 Aug 2026","Qualifier / Semi Final (H)","Home","4:30pm","LCF League",""],
+      ["Fri 07 Aug 2026","Qualifier / Semi Final (H)","Home","5:30pm","LCF League",""],
+      ["Sun 06 Sep 2026","Final (H)","Home","11am","LCF League",""]
+    ]
+  },
+  "18597": {
+    label: "OCC (LCF - Outdoor) 2nd XI — 2026",
+    ical: "https://www.optimists.cc/fixtures/teamid_18597/seasonid_19380/default.aspx?ical=true",
+    rows: [
+      ["Sat 02 May 2026","Star 2 (H)","Home","10am","LCF League",""],
+      ["Fri 08 May 2026","Heritage 2 CC (H)","Home","5:30pm","LCF League",""],
+      ["Sun 10 May 2026","Lux Knights 1 (H)","Home","4:30pm","LCF League",""],
+      ["Thu 14 May 2026","Star 1 (H)","Home","1:30pm","LCF League",""],
+      ["Fri 19 Jun 2026","Heritage CC (H)","Home","5:30pm","LCF League",""],
+      ["Sat 11 Jul 2026","OCC (H)","Home","5pm","LCF League",""],
+      ["Sun 02 Aug 2026","Heritage CC (H)","Home","1pm","LCF League",""]
+    ]
+  },
+  "4068": {
+    label: "OCC (BCF) 1st XI — 2026",
+    ical: "https://www.optimists.cc/fixtures/teamid_4068/seasonid_19380/default.aspx?ical=true",
+    rows: [
+      ["Sun 24 May 2026","vs Beveren CC (A)","Away","12:00","BCF League","Won by 7 wickets"],
+      ["Sun 14 Jun 2026","vs Mechelen Eagles CC (A)","Away","12:00","BCF League","Lost by 167 runs"],
+      ["Sat 27 Jun 2026","vs ICCB (A)","Away","12:00","BCF League",""],
+      ["Sat 11 Jul 2026","vs Gent CC (A)","Away","12:00","BCF League","Won by 4 wickets"],
+      ["Sun 19 Jul 2026","vs PCCB (H)","Home","12:00","BCF League","Won by 6 wickets"],
+      ["Sat 25 Jul 2026","vs Royal Antwerp CC (A)","Away","12:00","BCF League",""],
+      ["Sat 01 Aug 2026","vs Ostend CC (H)","Home","12:00","BCF League",""],
+      ["Sun 09 Aug 2026","Brugge Cricket Club (A)","Away","12:00","BCF League",""],
+      ["Sun 23 Aug 2026","Mechelen Eagles CC (A)","Away","12:00","BCF League",""],
+      ["Sat 05 Sep 2026","Ostend CC (A)","Away","12:00","BCF League",""],
+      ["Sun 13 Sep 2026","PCCB Cricket Club (A)","Away","12:00","BCF League",""],
+      ["Sun 20 Sep 2026","ICCB CC (H)","Home","12:30","BCF League",""]
+    ]
+  },
+  "19465": { label: "OCC (LCF - Indoor) 1st XI — 2026", ical: "https://www.optimists.cc/fixtures/teamid_19465/seasonid_19380/default.aspx?ical=true", rows: [] },
+  "4110": { label: "Optimists Maidens (OMCC) — 2026", ical: "https://www.optimists.cc/fixtures/teamid_4110/seasonid_19380/default.aspx?ical=true", rows: [] },
+  "19423": { label: "Optimists (Other) — 2026", ical: "https://www.optimists.cc/fixtures/teamid_19423/seasonid_19380/default.aspx?ical=true", rows: [] },
+  "19466": { label: "OCC (LCF - Indoor) 2nd XI — 2026", ical: "https://www.optimists.cc/fixtures/teamid_19466/seasonid_19380/default.aspx?ical=true", rows: [] },
+  "4069": { label: "Optimists U13s - Defunct — 2026", ical: "https://www.optimists.cc/fixtures/teamid_4069/seasonid_19380/default.aspx?ical=true", rows: [] }
+};
+
+function urlFor(section, teamId, name){
+  const slug = name.replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-|-$/g,'');
+  return `https://www.optimists.cc/${section}/teamid_${teamId}/${slug}.aspx`;
+}
+
+document.getElementById('syncedLabel').textContent = 'Synced 12 Sep 2026';
+
+// News
+document.getElementById('newsList').innerHTML = NEWS.map(n => `
+  <div class="card">
+    <div class="news-date">${n.date}</div>
+    <div class="news-title">${n.title}</div>
+    <p class="news-body">${n.body}</p>
+    <a class="news-link" href="${n.url}" target="_blank">Read full story →</a>
+  </div>
+`).join('');
+
+// Fixture team chips
+const chipRow = document.getElementById('teamChips');
+let currentTeam = "4070";
+function renderFixtures(){
+  const data = FIXTURES[currentTeam];
+  const body = document.getElementById('fixturesBody');
+  if(!data){
+    const team = TEAMS.find(t => t.id === currentTeam);
+    body.innerHTML = `<div class="empty">No fixtures cached yet for ${team.name}.<br><br><a href="${urlFor('fixtures', team.id, team.name)}" target="_blank">Open live fixtures →</a></div>`;
+    return;
+  }
+  if(data.rows.length === 0){
+    body.innerHTML = `<div class="empty">${data.label}: no fixtures currently listed (site showed "No records to display" again on 12 Sep 2026 — likely between seasons).<br><br><a class="btn outline" href="${data.ical}" target="_blank">Subscribe in your calendar (auto-updates) →</a></div>`;
+    return;
+  }
+  body.innerHTML = `
+    <div style="font-size:12.5px;color:#6b6b5e;margin-bottom:8px;">${data.label}</div>
+    <table class="fixtures">
+      <tr><th>Date</th><th>Opposition</th><th>Start</th><th>Comp</th></tr>
+      ${data.rows.map(r => `
+        <tr>
+          <td>${r[0]}</td>
+          <td>${r[1]}${r[5] ? `<br><span class="result">${r[5]}</span>` : ''}</td>
+          <td>${r[3]}</td>
+          <td>${r[4]}</td>
+        </tr>
+      `).join('')}
+    </table>
+    <a class="btn outline" href="${data.ical}" target="_blank">Subscribe in your calendar (auto-updates) →</a>
+  `;
+}
+TEAMS.forEach(t => {
+  const chip = document.createElement('button');
+  chip.className = 'chip' + (t.id === currentTeam ? ' active' : '');
+  chip.textContent = t.name;
+  chip.onclick = () => {
+    currentTeam = t.id;
+    [...chipRow.children].forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    renderFixtures();
+  };
+  chipRow.appendChild(chip);
+});
+renderFixtures();
+
+const AVERAGES = {
+  "4070": {
+    label: "2026 LCF League",
+    batting: [
+      ["William Cope","1","49","49.00"],["Ben Embleton","1","22","22.00"],["Anoop Orsu","1","13","13.00"],
+      ["Eliyas Jabar Khel","1","12","12.00"],["Asghar Ali Khan","1","10","10.00"],["Milad Momand","1","10","10.00"],
+      ["Edmund Packard","1","33*","0.00"],["Sareer Shah","1","10*","0.00"],["Aman Khan","1","2","2.00"]
+    ],
+    bowling: [
+      ["Eliyas Jabar Khel","4","38","4","9.50"],["Hashmat Momand","4","22","2","11.00"],
+      ["Sareer Shah","4","30","2","15.00"],["Milad Momand","4","45","1","45.00"]
+    ]
+  },
+  "4068": {
+    label: "2026 BCF League",
+    batting: [
+      ["Girish Venkateswaran","3","114","57.00"],["Vikram Vijh","2","73*","73.00"],["Amit Halbhavi","3","131","43.67"],
+      ["Anoop Orsu","2","66","33.00"],["Vivek Dixit","3","70","23.33"],["Mohit Dixit","2","23","23.00"],
+      ["Navieen Pugalendhi","1","53*","0.00"],["Advyth Manepalli","2","13","6.50"],["Pankaj Malav","2","20","20.00"]
+    ],
+    bowling: [
+      ["Milad Momand","8","114","8","14.25"],["Shameek Vats","7","93","7","13.29"],
+      ["Vishwajeet Deshpande","7","142","7","20.29"],["Pankaj Malav","6","111","6","18.50"],
+      ["Vikram Vijh","3","43","3","14.33"],["Mohit Dixit","3","90","3","30.00"]
+    ]
+  }
+};
+
+function renderAverages(teamId) {
+  const av = AVERAGES[teamId];
+  if (!av) return '';
+  return `
+    <div style="margin-top:8px;">
+      <div style="font-size:12px;font-weight:600;color:var(--pitch-dark);margin-bottom:4px;">${av.label} — top run scorers</div>
+      <table class="fixtures" style="margin-bottom:8px;">
+        <tr><th>Player</th><th>M</th><th>Runs</th><th>Avg</th></tr>
+        ${av.batting.slice(0,5).map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')}
+      </table>
+      <div style="font-size:12px;font-weight:600;color:var(--pitch-dark);margin-bottom:4px;">${av.label} — top wicket takers</div>
+      <table class="fixtures">
+        <tr><th>Player</th><th>Ov</th><th>Runs</th><th>Wkts</th><th>Avg</th></tr>
+        ${av.bowling.slice(0,4).map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td></tr>`).join('')}
+      </table>
+    </div>
+  `;
+}
+
+// Teams & squads
+document.getElementById('teamsList').innerHTML = TEAMS.map(t => {
+  const sq = SQUADS[t.id];
+  if (!sq) return '';
+  const capLine = sq.captain
+    ? `<div style="font-size:12.5px;color:#3A3A32;margin-bottom:4px;"><b>Captain:</b> ${sq.captain}${sq.vc && sq.vc !== sq.captain ? ` &nbsp;·&nbsp; <b>Vice Captain:</b> ${sq.vc}` : ''}</div>`
+    : `<div style="font-size:12.5px;color:#8a8a7a;margin-bottom:4px;">No captain listed</div>`;
+  const playersLine = sq.players.length
+    ? `<div style="font-size:12.5px;color:#3A3A32;margin-bottom:8px;"><b>Squad:</b> ${sq.players.join(', ')}</div>`
+    : '';
+  let histLine = '';
+  if (sq.history && sq.history.all) {
+    const a = sq.history.all;
+    histLine = `<div style="font-size:12.5px;color:var(--leather);font-weight:600;">All-time: ${a.m} played, ${a.w} won, ${a.l} lost${a.d?`, ${a.d} drawn`:''}${a.t?`, ${a.t} tied`:''}${a.c?`, ${a.c} cancelled`:''}</div>`;
+  }
+  return `
+    <div class="card">
+      <div class="news-title" style="font-size:15px;">${t.name}</div>
+      ${capLine}
+      ${playersLine}
+      ${histLine}
+      ${renderAverages(t.id)}
+      <a class="news-link" href="${urlFor('team', t.id, t.name)}" target="_blank">Full team page →</a>
+    </div>
+  `;
+}).join('');
+
+// Honours board
+document.getElementById('honoursList').innerHTML = Object.entries(HONOURS).map(([category, winners]) => `
+  <div class="card">
+    <div class="news-title" style="font-size:15.5px;">${category}</div>
+    ${winners.map(([year, who]) => `
+      <div style="display:flex;gap:10px;padding:5px 0;border-top:1px solid var(--line);font-size:13px;">
+        <div style="flex:0 0 42px;color:var(--leather);font-weight:600;font-variant-numeric:tabular-nums;">${year}</div>
+        <div style="color:#3A3A32;">${who}</div>
+      </div>
+    `).join('')}
+  </div>
+`).join('') + `<div class="note">Abbreviated to notable recent years per category. <a class="news-link" href="https://www.optimists.cc/honours/default.aspx" target="_blank">Full honours board back to 1984 →</a></div>`;
+
+const MORE_PAGES = {
+  history: {
+    title: "Club history",
+    render: () => `
+      <div class="card">
+        <div class="news-title" style="font-size:15.5px;">Founded 1976</div>
+        <p class="news-body">The oldest cricket club in Luxembourg, playing at the Pierre Werner Cricket Ground in Walferdange.</p>
+      </div>
+      <div class="card">
+        <div class="news-title" style="font-size:15px;">Notable BCF achievements</div>
+        ${[
+          ["2021","OCC 1st XI win BCF Division 2 title (no promotion expected) · OCC 2nd XI runners-up in BCF Division 3, promoted to Division 2"],
+          ["2020","OCC 2nd XI win BCF Division 3 title (no promotion due to COVID)"],
+          ["2019","OCC 2nd XI win BCF Division 4 title, promoted to Division 3"],
+          ["2018","OCC 1st XI win BCF T20 Cup · win BCF Division 2 title · OCC 2nd XI win Division 5, promoted to Division 4"],
+          ["2017","OCC 1st XI win BCF Division 2 title (no promotion to Division 1)"],
+          ["2016","OCC 1st XI win BCF Division 2 title (no promotion to Division 1)"],
+          ["2015","OCC 1st XI win BCF Division 2 title (no promotion to Division 1)"],
+          ["2013","OCC 1st XI reach BCF T20 finals day: semi-final"],
+          ["2012","OCC 1st XI reach BCF T20 finals day: final"],
+          ["2011","OCC 1st XI win BCF Division 2 title · reach BCF T20 finals day semi-final"]
+        ].map(([y,t]) => `
+          <div style="display:flex;gap:10px;padding:6px 0;border-top:1px solid var(--line);font-size:13px;">
+            <div style="flex:0 0 40px;color:var(--leather);font-weight:600;">${y}</div>
+            <div style="color:#3A3A32;">${t}</div>
+          </div>
+        `).join('')}
+      </div>
+    `
+  },
+  committee: {
+    title: "Club committee",
+    render: () => `
+      <div class="card">
+        ${[
+          ["Richard Neale","Chairman"], ["Tim Andrews","Vice-Chairman"], ["Tim Andrews","Secretary"],
+          ["Richard Neale","Fixtures Secretary"], ["Pankaj Malav","Club Captain (Interim)"],
+          ["Reinhardt Heyns","Treasurer"], ["William Heath","Facilities"], ["Richard Neale","LCF Liaison"],
+          ["Pankaj Malav","Junior Liaison"], ["Ben McIlroy","Director of Cricket"]
+        ].map(([name,role]) => `
+          <div style="display:flex;justify-content:space-between;padding:7px 0;border-top:1px solid var(--line);font-size:13.5px;">
+            <div style="color:#3A3A32;">${name}</div>
+            <div style="color:#6b6b5e;">${role}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="note" style="margin-top:0;">Use the site's contact form to reach any of these by role — <a class="news-link" href="https://www.optimists.cc/contact/default.aspx" target="_blank">optimists.cc/contact →</a></div>
+    `
+  },
+  join: {
+    title: "How to join the club",
+    render: () => `
+      <div class="card">
+        <div class="news-title" style="font-size:15px;">New members — 2026 season</div>
+        <p class="news-body">Fill in the application form and send it to the Club Secretary (email shown within the form), and pay the applicable fee(s) detailed there. Complete all sections and read the 'Cricket Matters' details carefully. You'll need to send a sports medical certificate if you intend to play matches, and select at least one volunteering area. Once accepted, you'll get a login for the club website to enter match availability and receive club news.</p>
+        <a class="btn" href="https://www.optimists.cc/clubs/1674/docs/OCC%20New%20Member%20Application%20Form%202026.pdf" target="_blank">Download 2026 application form →</a>
+      </div>
+      <div class="card">
+        <div class="news-title" style="font-size:15px;">Current members — renewal</div>
+        <p class="news-body">Fill in the renewal form and send it to the Club Secretary with payment. Same requirements apply: full form, medical certificate if playing, and a volunteering area.</p>
+        <a class="btn outline" href="https://www.optimists.cc/clubs/1674/docs/OCC%20Existing%20Member%20Renewal%20Form%202026.pdf" target="_blank">Download 2026 renewal form →</a>
+      </div>
+      <div class="card">
+        <div class="news-title" style="font-size:14.5px;">Match fees</div>
+        <p class="news-body" style="margin:0;">Match fees may be collected depending on match type. Players may be nominated to provide teas (unpaid) or take on management duties. Where catering is external, players are charged to cover the cost.</p>
+      </div>
+    `
+  },
+  location: {
+    title: "How to find us",
+    render: () => `
+      <div class="card">
+        <div class="news-title" style="font-size:15px;">Pierre Werner Cricket Ground</div>
+        <p class="news-body">36, rue de l'Alzette, Walferdange, Luxembourg<br>Postcode: L-7210<br>GPS: 49°39'52.9"N 6°07'40.6"E</p>
+        <p class="news-body">The ground is on the main road north out of Luxembourg City (direction Ettelbruck), 8km from the centre. From the Brussels–Luxembourg motorway 411, take the 'Bridel/Strassen' exit, follow signs to Bridel then Bereldange. At the T-junction (traffic lights, BGL BNP Paribas on your right) get into the left lane and turn left toward Ettelbruck. The road crosses the river to a roundabout — turn left, pass a football ground on your left, then turn left onto Rue de l'Alzette. If lost, ask for Walferdange swimming pool "Pidal".</p>
+        <p class="news-body" style="color:var(--leather);font-weight:600;">Please use the car park ~50m away — do not park on the road by the houses.</p>
+        <a class="btn" href="https://www.google.com/maps/dir/Current+Location/49.6645307341361,6.12792491912842" target="_blank">Get directions in Google Maps →</a>
+      </div>
+    `
+  },
+  galleries: {
+    title: "Photo galleries",
+    render: () => `
+      ${[
+        ["OCC vs British Chamber of Commerce 2026","Sunday 5th July — British Chamber of Commerce vs Optimists Cricket Club"],
+        ["OCC vs MCC - Sunday 7th June","50th Anniversary match — Lord Botham and Matthew Hoggard in attendance, Monty Panesar playing for OCC"],
+        ["50th Anniversary Dinner - 6th June","Photos from the 50th Anniversary Dinner at Porta Nova"],
+        ["Friday 5th June OCC 50th Anniversary","MCC and OCC members visit the British Ambassador's residence, then the T20 match (OCC vs MCC) that evening"],
+        ["50th Anniversary dinner photobooth","Best photos from the photobooth at the Gala Dinner"],
+        ["Christmas Market Drinks 2025","18th December at Place d'Armes — talking season and the woes of English cricket"],
+        ["Awards 2025","AGM at the pavilion on 15th November, followed by the Awards"],
+        ["New Pavilion Opening - 22 June 2024","Walferdange Mayor Francois Sauber officially opened the new pavilion during a Captains vs Chairmans match"],
+        ["Awards Dinner with Monty - 2024","Annual awards dinner at Hotel Parc-Belair with guest speaker Monty Panesar. Best Batsman: Ed Packard, Best Bowler: Pankaj Malav, Best All-rounder: Ed Packard, Best Fielder: Yama Abdiani, Best Performance: Asgar Barkat"],
+        ["OCC vs British Chamber of Commerce Sep 2022","Celebrating the BCC's 30th Anniversary"],
+        ["WOCC win LCF Division 1 in 2022","WOCC 1sts win LCF Division 1 for the 3rd year running, by the narrowest margin vs Star CC"],
+        ["Luxembourg Women's Cricket Tournament 2021","Best photos from the tournament weekend"],
+        ["July 2021 Flooding","Photos from the terrible floods"],
+        ["Strasbourg 2019","Strasbourg Strollers visited for the Butter Cup, 8 June 2019 — Strasbourg took the trophy"],
+        ["2019 Awards Dinner with Matthew Hoggard",""],
+        ["Cricket in Pink 2018","Over €1,200 raised for Think Pink Lux Cancer Charity"],
+        ["2017 Belgian Division 2 champions in action",""],
+        ["2016 - 1st XI secure BCF Division 2 title vs ACCB","Sept 18th 2016 — season decider went to the final over"]
+      ].map(([title, desc]) => `
+        <div class="card">
+          <div class="news-title" style="font-size:14.5px;">${title}</div>
+          ${desc ? `<p class="news-body" style="margin:0;">${desc}</p>` : ''}
+        </div>
+      `).join('')}
+      <div class="note">Showing recent highlights — the full archive runs back to 2002. <a class="news-link" href="https://www.optimists.cc/gallery/default.aspx" target="_blank">See every gallery →</a></div>
+    `
+  }
+};
+
+document.getElementById('moreList').innerHTML = `
+  <a href="#" data-page="history">Club history<span>Founded 1976 · BCF titles & achievements</span></a>
+  <a href="#" data-page="committee">Club committee<span>Chairman, Secretary, Treasurer & more</span></a>
+  <a href="#" data-page="join">How to join the club<span>2026 application & renewal forms</span></a>
+  <a href="#" data-page="location">How to find us<span>Address, GPS & directions</span></a>
+  <a href="#" data-page="galleries">Photo galleries<span>2002–2026 match & club event photos</span></a>
+  <a href="https://www.optimists.cc/honours/default.aspx" target="_blank">Honours board<span>See the Honours tab in this app</span></a>
+  <a href="https://www.optimists.cc/pages/page_38527/Document-Archive.aspx" target="_blank">Document archive<span>optimists.cc — club documents & forms</span></a>
+  <a href="https://www.optimists.cc/links/default.aspx" target="_blank">Links<span>optimists.cc — related cricket sites</span></a>
+  <a href="https://www.optimists.cc/pages/page_39239/OCC-50th.aspx" target="_blank">OCC 50th Anniversary<span>optimists.cc</span></a>
+`;
+
+document.querySelectorAll('#moreList a[data-page]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const page = MORE_PAGES[a.dataset.page];
+    document.getElementById('moreDetail').innerHTML = `<div class="section-title">${page.title}</div>` + page.render();
+    document.getElementById('moreList-wrap').style.display = 'none';
+    document.getElementById('moreDetail-wrap').style.display = 'block';
+  });
+});
+document.getElementById('moreBack').addEventListener('click', () => {
+  document.getElementById('moreDetail-wrap').style.display = 'none';
+  document.getElementById('moreList-wrap').style.display = 'block';
+});
+
+// Tab switching (top + bottom in sync)
+const sections = [
+  {id:'news', label:'News'},
+  {id:'fixtures', label:'Fixtures'},
+  {id:'teams', label:'Teams'},
+  {id:'honours', label:'Honours'},
+  {id:'more', label:'More'}
+];
+const topTabs = document.getElementById('topTabs');
+const bottomTabs = document.getElementById('bottomTabs');
+
+function setActive(id){
+  sections.forEach(s => {
+    document.getElementById('sec-'+s.id).classList.toggle('active', s.id === id);
+  });
+  [...topTabs.children].forEach(b => b.classList.toggle('active', b.dataset.id === id));
+  [...bottomTabs.children].forEach(b => b.classList.toggle('active', b.dataset.id === id));
+  document.querySelector('main').scrollTo?.(0,0);
+  window.scrollTo(0,0);
+}
+
+sections.forEach(s => {
+  const t = document.createElement('button');
+  t.textContent = s.label;
+  t.dataset.id = s.id;
+  t.onclick = () => setActive(s.id);
+  topTabs.appendChild(t);
+
+  const b = document.createElement('button');
+  b.dataset.id = s.id;
+  b.innerHTML = `<span class="dot"></span>${s.label}`;
+  b.onclick = () => setActive(s.id);
+  bottomTabs.appendChild(b);
+});
+setActive('news');
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW registration failed:', err));
+  });
+}
+</script>
+</body>
+</html>
