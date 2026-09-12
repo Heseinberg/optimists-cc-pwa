@@ -521,6 +521,71 @@ const MORE_PAGES = {
       </div>
     `
   },
+  documents: {
+    title: "Document archive",
+    render: () => `
+      <div class="card">
+        <div class="news-title" style="font-size:15px;">Members only</div>
+        <p class="news-body">This section of optimists.cc is restricted to logged-in club members ("The page you have accessed is restricted to logged in club members. Please login to view this page."). It isn't something this app can show without your own club login — open it directly on the site if you're a member and want to sign in.</p>
+        <a class="btn outline" href="https://www.optimists.cc/pages/page_38527/Document-Archive.aspx" target="_blank">Open on optimists.cc →</a>
+      </div>
+    `
+  },
+  links: {
+    title: "Links",
+    render: () => `
+      <div class="card">
+        <div class="news-title" style="font-size:14.5px;">Maps of grounds in Belgium</div>
+        ${[
+          ["OCC Facebook","https://www.facebook.com/groups/108789112665630/?fref=ts"]
+        ].map(([t,u]) => `<p class="news-body" style="margin:4px 0;"><a class="news-link" href="${u}" target="_blank">${t} →</a></p>`).join('')}
+      </div>
+      <div class="card">
+        <div class="news-title" style="font-size:14.5px;">Interesting websites</div>
+        ${[
+          ["Luxembourg Cricket Federation","https://luxembourgcricket.org/"],
+          ["New Delhi Restaurant for Raju's excellent curries!","http://www.newdelhi.lu"],
+          ["OCC Juniors blogspot","http://lcfjuniors.wordpress.com"],
+          ["OCC under 13s win opening games!","http://www.wort.lu/en/view/luxembourg-optimists-u13s-get-off-to-great-start-4fbb6b8ae4b03aac600d44ae"],
+          ["Optimists shop","https://teamwear.kalibazar.co.uk/shop/optimistscc"]
+        ].map(([t,u]) => `<p class="news-body" style="margin:4px 0;"><a class="news-link" href="${u}" target="_blank">${t} →</a></p>`).join('')}
+      </div>
+      <div class="card">
+        <div class="news-title" style="font-size:14.5px;">Facebook pages</div>
+        ${[
+          ["LCF Facebook","https://www.facebook.com/Luxembourg-Cricket-Federation-161710333919593/?fref=ts"],
+          ["OCC Facebook","https://www.facebook.com/groups/108789112665630/?fref=ts"],
+          ["Star CC Luxembourg","http://www.facebook.com/StarCcLuxembourg"]
+        ].map(([t,u]) => `<p class="news-body" style="margin:4px 0;"><a class="news-link" href="${u}" target="_blank">${t} →</a></p>`).join('')}
+      </div>
+      <div class="card">
+        <div class="news-title" style="font-size:14.5px;">Six a side</div>
+        ${[
+          ["Sixes 2014 at CricHQ","http://www.crichq.com/plugins/comp_mgmt/organisations/444?width=598&height=400&border=1"]
+        ].map(([t,u]) => `<p class="news-body" style="margin:4px 0;"><a class="news-link" href="${u}" target="_blank">${t} →</a></p>`).join('')}
+      </div>
+      <div class="note">Straight from optimists.cc's Links page. <a class="news-link" href="https://www.optimists.cc/links/default.aspx" target="_blank">See it on the site →</a></div>
+    `
+  },
+  occ50th: {
+    title: "OCC 50th Anniversary",
+    render: () => `
+      <div class="card">
+        <div class="news-title" style="font-size:15.5px;">Optimists Cricket Club 50th Anniversary Celebration</div>
+        <p class="news-body">Saturday, 6 June 2026 — Pierre Werner Cricket Ground, Walferdange.</p>
+        <p class="news-body">The club organised celebrations throughout 2026, with the main event a daytime cricket match followed by an evening of food, drink, music and more.</p>
+      </div>
+      <div class="card">
+        <div class="news-title" style="font-size:15px;">MCC visit</div>
+        <p class="news-body">The Marylebone Cricket Club sent a touring side to play in the match.</p>
+      </div>
+      <div class="card">
+        <div class="news-title" style="font-size:14.5px;">Contact</div>
+        <p class="news-body" style="margin:0;">occ.clubsec@gmail.com</p>
+      </div>
+      <div class="note">This page on optimists.cc is the club's original "save the date" announcement — the event itself has already taken place (5–7 June 2026); see the photos in the Photo galleries page above. <a class="news-link" href="https://www.optimists.cc/pages/page_39239/OCC-50th.aspx" target="_blank">See it on the site →</a></div>
+    `
+  },
   galleries: {
     title: "Photo galleries",
     render: () => `
@@ -537,7 +602,9 @@ const MORE_PAGES = {
         ["OCC vs British Chamber of Commerce Sep 2022","Celebrating the BCC's 30th Anniversary"],
         ["WOCC win LCF Division 1 in 2022","WOCC 1sts win LCF Division 1 for the 3rd year running, by the narrowest margin vs Star CC"],
         ["Luxembourg Women's Cricket Tournament 2021","Best photos from the tournament weekend"],
+        ["Some drone photos from 2021 season","Varied drone photos of PWCG"],
         ["July 2021 Flooding","Photos from the terrible floods"],
+        ["Christmas Market 2019","Selection of Photos from Optimists Christmas market drinks"],
         ["Strasbourg 2019","Strasbourg Strollers visited for the Butter Cup, 8 June 2019 — Strasbourg took the trophy"],
         ["2019 Awards Dinner with Matthew Hoggard",""],
         ["Cricket in Pink 2018","Over €1,200 raised for Think Pink Lux Cancer Charity"],
@@ -561,9 +628,9 @@ document.getElementById('moreList').innerHTML = `
   <a href="#" data-page="location">How to find us<span>Address, GPS & directions</span></a>
   <a href="#" data-page="galleries">Photo galleries<span>2002–2026 match & club event photos</span></a>
   <a href="https://www.optimists.cc/honours/default.aspx" target="_blank">Honours board<span>See the Honours tab in this app</span></a>
-  <a href="https://www.optimists.cc/pages/page_38527/Document-Archive.aspx" target="_blank">Document archive<span>optimists.cc — club documents & forms</span></a>
-  <a href="https://www.optimists.cc/links/default.aspx" target="_blank">Links<span>optimists.cc — related cricket sites</span></a>
-  <a href="https://www.optimists.cc/pages/page_39239/OCC-50th.aspx" target="_blank">OCC 50th Anniversary<span>optimists.cc</span></a>
+  <a href="#" data-page="documents">Document archive<span>Members-only on optimists.cc</span></a>
+  <a href="#" data-page="links">Links<span>Related cricket sites & club Facebook pages</span></a>
+  <a href="#" data-page="occ50th">OCC 50th Anniversary<span>6 June 2026 · MCC visit & gala dinner</span></a>
 `;
 
 document.querySelectorAll('#moreList a[data-page]').forEach(a => {
