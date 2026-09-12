@@ -1,4 +1,4 @@
-const CACHE = 'optimists-cc-v5';
+const CACHE = 'optimists-cc-v6';
 const SHELL = [
   './',
   './index.html',
